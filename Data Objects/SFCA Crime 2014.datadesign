@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datamart xmlns="http://www.eclipse.org/birt/2005/design" version="3.2.23" id="1">
+    <property name="createdBy">Eclipse BIRT Designer Version 4.4.0.v20150710-0101 Build &lt;4.2.3.v20150710-0101></property>
+    <data-sources>
+        <oda-data-source extensionID="org.eclipse.datatools.connectivity.oda.flatfile" name="Data Source" id="2">
+            <property name="URI">D:\Crime Data\SFPD_Crime_Data_2014.csv</property>
+            <property name="DELIMTYPE">COMMA</property>
+            <property name="CHARSET">UTF-8</property>
+            <property name="INCLCOLUMNNAME">YES</property>
+            <property name="INCLTYPELINE">NO</property>
+            <property name="TRAILNULLCOLS">NO</property>
+        </oda-data-source>
+    </data-sources>
+    <data-sets>
+        <oda-data-set extensionID="org.eclipse.datatools.connectivity.oda.flatfile.dataSet" name="Data Set" id="3">
+            <list-property name="computedColumns">
+                <structure>
+                    <property name="name">Arrest</property>
+                    <expression name="expression" type="javascript">if(row["Resolution"].indexOf("ARREST") !=-1 || row["Resolution"].indexOf("PROSECUTED BY OUTSIDE") != -1){&#13;
+	"Arrest Occurred";&#13;
+}else{&#13;
+	"No Arrest Occurred";&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DayInt</property>
+                    <expression name="expression" type="javascript">switch(row["DayOfWeek"]){&#13;
+	case "Monday":&#13;
+		1;&#13;
+		break;&#13;
+	case "Tuesday":&#13;
+		2;&#13;
+		break;&#13;
+	case "Wednesday":&#13;
+		3;&#13;
+		break;&#13;
+	case "Thursday":&#13;
+		4;&#13;
+		break;&#13;
+	case "Friday":&#13;
+		5;&#13;
+		break;&#13;
+	case "Saturday":&#13;
+		6;&#13;
+		break;&#13;
+	case "Sunday":&#13;
+		7;&#13;
+		break;&#13;
+}</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">MonthInt</property>
+                    <expression name="expression" type="javascript">BirtDateTime.month(row["Date"]);</expression>
+                    <property name="dataType">integer</property>
+                </structure>
+                <structure>
+                    <property name="name">MonthString</property>
+                    <expression name="expression" type="javascript">switch(row["MonthInt"]){&#13;
+	case 1:&#13;
+		"Jan.";&#13;
+		break;&#13;
+	case 2:&#13;
+		"Feb.";&#13;
+		break;&#13;
+	case 3:&#13;
+		"Mar.";&#13;
+		break;&#13;
+	case 4:&#13;
+		"Apr.";&#13;
+		break;&#13;
+	case 5:&#13;
+		"May";&#13;
+		break;&#13;
+	case 6:&#13;
+		"June";&#13;
+		break;&#13;
+	case 7:&#13;
+		"July";&#13;
+		break;&#13;
+	case 8:&#13;
+		"Aug.";&#13;
+		break;&#13;
+	case 9:&#13;
+		"Sept.";&#13;
+		break;&#13;
+	case 10:&#13;
+		"Oct.";&#13;
+		break;&#13;
+	case 11:&#13;
+		"Nov.";&#13;
+		break;&#13;
+	case 12:&#13;
+		"Dec.";&#13;
+		break;&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DayAbv</property>
+                    <expression name="expression" type="javascript">switch(row["DayInt"]){&#13;
+	case 1:&#13;
+		"Mon.";&#13;
+		break;&#13;
+	case 2:&#13;
+		"Tues.";&#13;
+		break;&#13;
+	case 3:&#13;
+		"Wed.";&#13;
+		break;&#13;
+	case 4:&#13;
+		"Thurs.";&#13;
+		break;&#13;
+	case 5:&#13;
+		"Fri.";&#13;
+		break;&#13;
+	case 6:&#13;
+		"Sat.";&#13;
+		break;&#13;
+	case 7:&#13;
+		"Sun.";&#13;
+		break;&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">DayNight</property>
+                    <expression name="expression" type="javascript">var crimeTime = Date.parse("01/01/2014 " + row["Time"]);&#13;
+var night = Date.parse("01/01/2014 20:00:00");&#13;
+var day = Date.parse("01/01/2014 05:00:00");&#13;
+&#13;
+if(crimeTime > night || crimeTime &lt; day){&#13;
+	"Night (8 PM - 5 AM)";&#13;
+}else{&#13;
+	"Day (5 AM - 8 PM)";&#13;
+}</expression>
+                    <property name="dataType">string</property>
+                </structure>
+                <structure>
+                    <property name="name">TotalCrimes</property>
+                    <property name="dataType">integer</property>
+                    <property name="aggregateFunction">COUNT</property>
+                    <list-property name="arguments">
+                        <structure>
+                            <property name="name">Expression</property>
+                            <expression name="value" type="javascript">row["Category"]</expression>
+                        </structure>
+                    </list-property>
+                </structure>
+            </list-property>
+            <list-property name="columnHints">
+                <structure>
+                    <property name="columnName">IncidntNum</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">IncidntNum</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Category</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Category</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Descript</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Descript</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DayOfWeek</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">DayOfWeek</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Date</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Date</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Time</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Time</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">PdDistrict</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">PdDistrict</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Resolution</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Resolution</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Address</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Address</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">X</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">X</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Y</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Y</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Location</property>
+                    <property name="analysis">dimension</property>
+                    <text-property name="heading">Location</text-property>
+                    <property name="indexColumn">false</property>
+                    <property name="compressed">false</property>
+                </structure>
+                <structure>
+                    <property name="columnName">Arrest</property>
+                    <property name="analysis">attribute</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DayInt</property>
+                    <property name="analysis">measure</property>
+                </structure>
+                <structure>
+                    <property name="columnName">MonthInt</property>
+                    <property name="analysis">measure</property>
+                </structure>
+                <structure>
+                    <property name="columnName">MonthString</property>
+                    <property name="analysis">attribute</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DayAbv</property>
+                    <property name="analysis">attribute</property>
+                </structure>
+                <structure>
+                    <property name="columnName">DayNight</property>
+                    <property name="analysis">attribute</property>
+                </structure>
+                <structure>
+                    <property name="columnName">TotalCrimes</property>
+                    <property name="analysis">measure</property>
+                </structure>
+            </list-property>
+            <list-property name="filter">
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"LARCENY/THEFT"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"ASSAULT"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"FRAUD"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"NON-CRIMINAL"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"OTHER OFFENSES"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"SECONDARY CODES"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"SUSPICIOUS OCC"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"VANDALISM"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">row["Category"]</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">"WARRANTS"</value>
+                    </simple-property-list>
+                </structure>
+                <structure>
+                    <property name="operator">ne</property>
+                    <expression name="expr" type="javascript">BirtDateTime.year(row["Date"]);</expression>
+                    <simple-property-list name="value1">
+                        <value type="javascript">2015</value>
+                    </simple-property-list>
+                </structure>
+            </list-property>
+            <structure name="cachedMetaData">
+                <list-property name="resultSet">
+                    <structure>
+                        <property name="position">1</property>
+                        <property name="name">IncidntNum</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">2</property>
+                        <property name="name">Category</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">3</property>
+                        <property name="name">Descript</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">4</property>
+                        <property name="name">DayOfWeek</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">5</property>
+                        <property name="name">Date</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">6</property>
+                        <property name="name">Time</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">7</property>
+                        <property name="name">PdDistrict</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">8</property>
+                        <property name="name">Resolution</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">9</property>
+                        <property name="name">Address</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">10</property>
+                        <property name="name">X</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">11</property>
+                        <property name="name">Y</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">12</property>
+                        <property name="name">Location</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">13</property>
+                        <property name="name">Arrest</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">14</property>
+                        <property name="name">DayInt</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">15</property>
+                        <property name="name">MonthInt</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                    <structure>
+                        <property name="position">16</property>
+                        <property name="name">MonthString</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">17</property>
+                        <property name="name">DayAbv</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">18</property>
+                        <property name="name">DayNight</property>
+                        <property name="dataType">string</property>
+                    </structure>
+                    <structure>
+                        <property name="position">19</property>
+                        <property name="name">TotalCrimes</property>
+                        <property name="dataType">integer</property>
+                    </structure>
+                </list-property>
+            </structure>
+            <property name="dataSource">Data Source</property>
+            <list-property name="resultSet">
+                <structure>
+                    <property name="position">1</property>
+                    <property name="name">IncidntNum</property>
+                    <property name="nativeName">IncidntNum</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">2</property>
+                    <property name="name">Category</property>
+                    <property name="nativeName">Category</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">3</property>
+                    <property name="name">Descript</property>
+                    <property name="nativeName">Descript</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">4</property>
+                    <property name="name">DayOfWeek</property>
+                    <property name="nativeName">DayOfWeek</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">5</property>
+                    <property name="name">Date</property>
+                    <property name="nativeName">Date</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">6</property>
+                    <property name="name">Time</property>
+                    <property name="nativeName">Time</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">7</property>
+                    <property name="name">PdDistrict</property>
+                    <property name="nativeName">PdDistrict</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">8</property>
+                    <property name="name">Resolution</property>
+                    <property name="nativeName">Resolution</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">9</property>
+                    <property name="name">Address</property>
+                    <property name="nativeName">Address</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">10</property>
+                    <property name="name">X</property>
+                    <property name="nativeName">X</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">11</property>
+                    <property name="name">Y</property>
+                    <property name="nativeName">Y</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+                <structure>
+                    <property name="position">12</property>
+                    <property name="name">Location</property>
+                    <property name="nativeName">Location</property>
+                    <property name="dataType">string</property>
+                    <property name="nativeDataType">12</property>
+                </structure>
+            </list-property>
+            <xml-property name="queryText"><![CDATA[select "IncidntNum", "Category", "Descript", "DayOfWeek", "Date", "Time", "PdDistrict", "Resolution", "Address", "X", "Y", "Location" from "D:\Crime Data\SFPD_Crime_Data_2014.csv" : {"IncidntNum","IncidntNum",STRING;"Category","Category",STRING;"Descript","Descript",STRING;"DayOfWeek","DayOfWeek",STRING;"Date","Date",STRING;"Time","Time",STRING;"PdDistrict","PdDistrict",STRING;"Resolution","Resolution",STRING;"Address","Address",STRING;"X","X",STRING;"Y","Y",STRING;"Location","Location",STRING}]]></xml-property>
+            <xml-property name="designerValues"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+<model:DesignValues xmlns:design="http://www.eclipse.org/datatools/connectivity/oda/design" xmlns:model="http://www.eclipse.org/birt/report/model/adapter/odaModel">
+  <Version>2.0</Version>
+  <design:ResultSets derivedMetaData="true">
+    <design:resultSetDefinitions>
+      <design:resultSetColumns>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>IncidntNum</design:name>
+              <design:position>1</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>IncidntNum</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Category</design:name>
+              <design:position>2</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Category</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Descript</design:name>
+              <design:position>3</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Descript</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>DayOfWeek</design:name>
+              <design:position>4</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>DayOfWeek</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Date</design:name>
+              <design:position>5</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Date</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Time</design:name>
+              <design:position>6</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Time</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>PdDistrict</design:name>
+              <design:position>7</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>PdDistrict</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Resolution</design:name>
+              <design:position>8</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Resolution</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Address</design:name>
+              <design:position>9</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Address</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>X</design:name>
+              <design:position>10</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>X</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Y</design:name>
+              <design:position>11</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Y</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+        <design:resultColumnDefinitions>
+          <design:attributes>
+            <design:identifier>
+              <design:name>Location</design:name>
+              <design:position>12</design:position>
+            </design:identifier>
+            <design:nativeDataTypeCode>12</design:nativeDataTypeCode>
+            <design:precision>-1</design:precision>
+            <design:scale>-1</design:scale>
+            <design:nullability>Unknown</design:nullability>
+          </design:attributes>
+          <design:usageHints>
+            <design:label>Location</design:label>
+            <design:formattingHints/>
+          </design:usageHints>
+        </design:resultColumnDefinitions>
+      </design:resultSetColumns>
+      <design:criteria/>
+    </design:resultSetDefinitions>
+  </design:ResultSets>
+</model:DesignValues>]]></xml-property>
+        </oda-data-set>
+    </data-sets>
+    <property name="linkedDataModels">
+        <linked-data-model name="Data Model" id="4">
+            <property name="aliasDataSets">
+                <alias-data-set name="Data Set" id="18">
+                    <property name="originDataSet">Data Set</property>
+                </alias-data-set>
+            </property>
+            <property name="categories">
+                <category name="Data Set" id="5">
+                    <property name="categoryColumns">
+                        <category-column name="IncidntNum" id="6">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">IncidntNum</property>
+                        </category-column>
+                        <category-column name="Category" id="7">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Category</property>
+                        </category-column>
+                        <category-column name="Descript" id="8">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Descript</property>
+                        </category-column>
+                        <category-column name="DayOfWeek" id="9">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">DayOfWeek</property>
+                        </category-column>
+                        <category-column name="Date" id="10">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Date</property>
+                        </category-column>
+                        <category-column name="Time" id="11">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Time</property>
+                        </category-column>
+                        <category-column name="PdDistrict" id="12">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">PdDistrict</property>
+                        </category-column>
+                        <category-column name="Resolution" id="13">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Resolution</property>
+                        </category-column>
+                        <category-column name="Address" id="14">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Address</property>
+                        </category-column>
+                        <category-column name="X" id="15">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">X</property>
+                        </category-column>
+                        <category-column name="Y" id="16">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Y</property>
+                        </category-column>
+                        <category-column name="Location" id="17">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Location</property>
+                        </category-column>
+                        <category-column name="Arrest" id="19">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">Arrest</property>
+                        </category-column>
+                        <category-column name="DayInt" id="20">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">DayInt</property>
+                        </category-column>
+                        <category-column name="MonthInt" id="21">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">MonthInt</property>
+                        </category-column>
+                        <category-column name="MonthString" id="22">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">MonthString</property>
+                        </category-column>
+                        <category-column name="DayAbv" id="23">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">DayAbv</property>
+                        </category-column>
+                        <category-column name="DayNight" id="24">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">DayNight</property>
+                        </category-column>
+                        <category-column name="TotalCrimes" id="25">
+                            <property name="aliasDataSet">Data Model/Data Set</property>
+                            <property name="resultSetColumnName">TotalCrimes</property>
+                        </category-column>
+                    </property>
+                </category>
+            </property>
+            <property name="pushDown">true</property>
+        </linked-data-model>
+    </property>
+</datamart>
